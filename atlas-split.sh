@@ -11,7 +11,6 @@ function Usage () {
 
 function SplitPng () {
     local png="${1}" name="${2}" rotate="${3}" xy="${4}" size="${5}" orig="${6}" offset="${7}" dir="${8}"
-    # game.png bubble false 930 966 55 55 55 55 0 0 ./out
     local x=`echo ${xy} | awk '{print $1}'`
     local y=`echo ${xy} | awk '{print $2}'`
     local width=`echo ${size} | awk '{print $1}'`
