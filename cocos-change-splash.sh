@@ -23,17 +23,17 @@ function ChangeSplash () {
     insert_str="<img src=\"icon.png\" style=\" position: absolute; width: ${width}px; height: ${height}px; left: 50%; top: 50%; margin-left: -$((width/2))px; margin-top: -$((height/2))px; \"/>"
     gsed -i "${lineno}a${insert_str}" "${html_file}"
 
-    echo "正在复制icon图片"
+    echo "正在复制icon图片 ${icon}"
     cp "${icon}" `find "${dir}" -name "web-${target}"`/icon.png
     echo "正在复制splash图片"
-    cp "${splash}" `find "${dir}" -name "splash.*.png" | grep "${target}"`
-    local css_file=`find "${dir}" -name "style-${target}.*.css" | grep "${target}"`
+    cp "${splash}" `find "${dir}" -name "splash*.png" | grep "${target}"`
+    local css_file=`find "${dir}" -name "style-${target}*.css" | grep "${target}"`
     echo "正在修改css文件:	${css_file}"
     lineno=`grep -n 'background:' "${css_file}" | awk -F ':' '{print $1}'`
     lineno=$((lineno+1))
     gsed -i "${lineno}s/\d*/100/" "${css_file}"
 
-    local js_file=`find "${dir}" -name "main.*.js" | grep "${target}"`
+    local js_file=`find "${dir}" -name "main*.js" | grep "${target}"`
     echo "正在修改js文件:	${js_file}"
     lineno=`grep -n 'none' "${js_file}" | awk -F ':' '{print $1}'`
     gsed -i "${lineno}s/^/\/\//" "${js_file}"
@@ -48,7 +48,7 @@ function ChangeSplash () {
 
 function Main () {
     [[ $# -eq 0 ]] && Usage && exit 1
-    local dir icon target="mobile" splash
+    local dir splash icon target="mobile" 
     while [[ -n $1 ]]; do
 	case $1 in
 	    -h|--help)
@@ -87,9 +87,10 @@ function Main () {
 		;;
 	esac
     done
-    if [[ -z ${dir} || -z ${target} || -z ${icon} || -z ${splash} ]]; then
+    if [[ -z ${dir} || -z ${target} || -z ${splash} ]]; then
 	Usage
     else
+	[[ -z ${icon} ]] && icon=`find ${dir} -name 'splash*.png' | grep ${target}`
 	ChangeSplash ${dir} ${target} ${icon} ${splash}
     fi
 }
